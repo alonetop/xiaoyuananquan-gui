@@ -23,6 +23,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var outputRemainder = Data()
     private let promptParser = PromptParser()
     private var promptCounts: [Prompt: Int] = [:]
+    private let outputQueue = DispatchQueue(label: "local.codex.xiaoyuananquan.output")
 
     private lazy var supportDirectory: URL = {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -109,6 +110,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         logView.isEditable = false
         logView.isSelectable = true
+        logView.isRichText = false
+        logView.importsGraphics = false
         logView.font = .monospacedSystemFont(ofSize: 12.5, weight: .regular)
         logView.textColor = .textColor
         logView.textContainerInset = NSSize(width: 10, height: 10)
@@ -171,6 +174,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             creditRow.widthAnchor.constraint(equalTo: stack.widthAnchor),
             warning.widthAnchor.constraint(equalTo: stack.widthAnchor)
         ])
+
+        appendLog("运行日志会显示在这里。填写信息并点击“开始运行”。\n")
     }
 
     private func makeLabel(_ text: String) -> NSTextField {
@@ -215,21 +220,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             environment["PYTHONIOENCODING"] = "utf-8"
             task.environment = environment
 
-            outputPipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
-                let data = handle.availableData
-                guard !data.isEmpty else { return }
-                DispatchQueue.main.async { self?.consumeOutput(data) }
-            }
-            task.terminationHandler = { [weak self] finished in
-                outputPipe.fileHandleForReading.readabilityHandler = nil
-                DispatchQueue.main.async { self?.processDidFinish(status: finished.terminationStatus) }
-            }
-
             try task.run()
+            try? outputPipe.fileHandleForWriting.close()
+            try? inputPipe.fileHandleForReading.close()
             process = task
             inputHandle = inputPipe.fileHandleForWriting
             setRunning(true)
             statusLabel.stringValue = "运行中"
+            appendLog("内置核心已启动，正在等待响应…\n")
+
+            let outputHandle = outputPipe.fileHandleForReading
+            outputQueue.async { [weak self] in
+                while true {
+                    let data = outputHandle.availableData
+                    if data.isEmpty { break }
+                    DispatchQueue.main.async { [weak self] in
+                        self?.consumeOutput(data)
+                    }
+                }
+                task.waitUntilExit()
+                let status = task.terminationStatus
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self, self.process === task else { return }
+                    self.processDidFinish(status: status)
+                }
+            }
         } catch {
             showAlert("启动失败", detail: error.localizedDescription)
             process = nil
@@ -293,13 +308,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         switch prompt {
         case .province:
+            appendLog("\n→ 已自动填写省份\n")
             sendLine(provinceField.stringValue)
         case .school:
+            appendLog("\n→ 已自动填写学校\n")
             sendLine(schoolField.stringValue)
         case .account:
+            appendLog("\n→ 已自动填写账号（内容已隐藏）\n")
             sendLine(accountField.stringValue)
         case .password:
             let password = passwordField.stringValue
+            appendLog("\n→ 已自动填写密码（内容已隐藏）\n")
             sendLine(password)
             passwordField.stringValue = ""
         case .choice:
@@ -318,6 +337,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private func requestManualInput(_ message: String) {
+        appendLog("\n→ \(message)\n")
         responseLabel.stringValue = message
         responseField.isEnabled = true
         sendButton.isEnabled = true
@@ -327,6 +347,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @objc private func sendResponse() {
         guard process != nil else { return }
         sendLine(responseField.stringValue)
+        appendLog("→ 已发送补充输入\n")
         responseField.stringValue = ""
         responseField.isEnabled = false
         sendButton.isEnabled = false
@@ -343,6 +364,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     @objc private func stopRun() {
+        appendLog("\n正在请求停止内置核心…\n")
         process?.terminate()
         statusLabel.stringValue = "正在停止…"
     }
@@ -389,9 +411,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             appendLog(text)
             outputRemainder.removeAll()
         }
+        try? inputHandle?.close()
         process = nil
         inputHandle = nil
         setRunning(false)
+        appendLog("\n内置核心已结束（状态 \(status)）。\n")
         statusLabel.stringValue = status == 0 ? "已完成" : "已结束（状态 \(status)）"
         responseLabel.stringValue = status == 0 ? "运行完成，可打开结果文件夹查看证书" : "程序已结束，请查看上方日志"
     }

@@ -51,6 +51,8 @@ Release 同时提供 `SHA256SUMS.txt`，可用于验证文件完整性。
 - 深色和浅色环境下均保持日志可读
 - 内置作者、原项目、源码及开源许可信息
 
+如果 macOS 旧版运行时日志区域始终空白，请升级到 `v1.1.1` 或更高版本；修复版会显示核心输出以及自动填写、等待输入和结束状态。
+
 结果目录：
 
 - macOS：`~/Library/Application Support/XiaoyuanAnQuanTong GUI/`

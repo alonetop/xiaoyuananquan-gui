@@ -116,6 +116,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         logView.textColor = .textColor
         logView.textContainerInset = NSSize(width: 10, height: 10)
         logView.backgroundColor = NSColor.textBackgroundColor
+        logView.frame = NSRect(x: 0, y: 0, width: 700, height: 260)
+        logView.minSize = NSSize(width: 0, height: 0)
+        logView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        logView.isVerticallyResizable = true
+        logView.isHorizontallyResizable = false
+        logView.autoresizingMask = [.width]
+        logView.textContainer?.containerSize = NSSize(width: 700, height: CGFloat.greatestFiniteMagnitude)
+        logView.textContainer?.widthTracksTextView = true
         let scrollView = NSScrollView()
         scrollView.documentView = logView
         scrollView.hasVerticalScroller = true

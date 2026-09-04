@@ -66,6 +66,8 @@ Windows x64  dbc5a84bc3c4c8ae208dfd1695b1e43db585a3a556d8da6de5c76be1ba889f88
 
 详细修改和版权信息见 [NOTICE.md](NOTICE.md)。
 
+Windows 安装器使用的 Inno Setup 简体中文翻译来自 Kira 维护的开源翻译项目，并保留其 MIT License。
+
 ## 从源码构建
 
 仓库不提交预编译二进制。构建脚本会从原项目 `v1.0.0` Release 下载对应核心，校验哈希后再封装。

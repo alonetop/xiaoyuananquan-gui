@@ -11,3 +11,5 @@
 本项目没有修改原项目的 Python 业务源码；macOS 和 Windows 应用会封装原项目发布的对应命令行可执行文件，并增加图形界面、进程管理、实时日志、输入自动化和结果目录入口。原项目的对应源码快照保存在 `upstream/v1.0.0/`。
 
 本软件不提供任何明示或默示担保。完整许可条款见 [LICENSE](LICENSE)。
+
+Windows 安装器使用郑瀚阳（Kira）维护的 Inno Setup 简体中文翻译，按 MIT License 使用；许可文本见 `installer/ChineseSimplified.LICENSE`。

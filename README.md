@@ -4,6 +4,12 @@
 
 > **重要提示**：原项目会自动处理课程、提交考试并下载证书。请先确认学校和平台允许此类操作。原项目当前使用明文 HTTP 连接，账号与密码在传输过程中存在被截获的风险。
 
+## 项目截图
+
+<p align="center">
+  <img src="docs/screenshot-macos.png" alt="校园安全通 macOS 客户端界面" width="900">
+</p>
+
 ## 下载
 
 请从 [GitHub Releases](https://github.com/alonetop/xiaoyuananquan-gui/releases/latest) 下载最新版本。
@@ -109,10 +115,6 @@ dotnet run --project tests\PromptEngineTests.csproj
 ```
 
 测试只使用模拟文本，不会登录平台或使用真实账号。
-
-## 自动构建和发布
-
-推送 `v*` 标签会触发 GitHub Actions：分别构建 macOS 和 Windows 发行包、运行提示解析测试、生成 `SHA256SUMS.txt`，并创建同名 GitHub Release。也可以从 Actions 页面手动触发构建，此时只生成临时构建产物，不创建 Release。
 
 ## 安全、规则与免责声明
 

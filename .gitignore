@@ -1,0 +1,11 @@
+.DS_Store
+.build/
+dist/
+macos/vendor/
+windows/vendor/
+windows/bin/
+windows/obj/
+tests/bin/
+tests/obj/
+*.user
+*.suo

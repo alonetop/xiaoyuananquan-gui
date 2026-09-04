@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AssemblyName>XiaoyuanAnQuanTongGUI</AssemblyName>
+    <RootNamespace>XiaoyuanAnQuanTongGUI</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <Version>1.1.0</Version>
+    <Authors>掠过古城的风</Authors>
+    <Copyright>图形客户端：掠过古城的风；原项目：hangone</Copyright>
+    <CoreExecutable Condition="'$(CoreExecutable)' == ''">$(MSBuildProjectDirectory)\vendor\XiaoyuanAnQuanTong-windows-x64.exe</CoreExecutable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net48" Version="1.0.3" PrivateAssets="all" />
+    <EmbeddedResource Include="$(CoreExecutable)" LogicalName="XiaoyuanAnQuanTong.Core.exe" />
+    <EmbeddedResource Include="..\LICENSE" LogicalName="XiaoyuanAnQuanTong.LICENSE" />
+  </ItemGroup>
+
+  <Target Name="CheckCoreExecutable" BeforeTargets="BeforeBuild">
+    <Error Condition="!Exists('$(CoreExecutable)')" Text="缺少上游 Windows 核心：$(CoreExecutable)。请先运行 scripts/fetch-upstream.ps1。" />
+  </Target>
+</Project>

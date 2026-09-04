@@ -1,0 +1,85 @@
+name: Build and release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test macOS prompt parser
+        run: |
+          mkdir -p .build
+          swiftc macos/PromptParser.swift tests/PromptParserTests.swift -o .build/prompt-parser-tests
+          .build/prompt-parser-tests
+      - name: Build macOS ARM64 app
+        run: |
+          chmod +x scripts/fetch-upstream.sh scripts/build-macos.sh
+          scripts/build-macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-arm64
+          path: dist/校园安全通-macOS-arm64.zip
+          if-no-files-found: error
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Test Windows prompt parser
+        run: dotnet run --project tests\PromptEngineTests.csproj
+      - name: Build Windows mock core
+        run: dotnet build tests\MockCore.csproj --configuration Release
+      - name: Ensure Inno Setup is installed
+        shell: powershell
+        run: |
+          $paths = @(
+            "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+            "$env:ProgramFiles\Inno Setup 6\ISCC.exe"
+          )
+          if (-not ($paths | Where-Object { Test-Path $_ })) {
+            choco install innosetup --no-progress -y
+          }
+      - name: Build Windows installer
+        shell: powershell
+        run: .\scripts\build-windows.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64
+          path: dist/校园安全通-Windows-x64-Setup.exe
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [macos, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*-x64"
+          path: release
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-arm64
+          path: release
+      - name: Generate checksums
+        working-directory: release
+        run: sha256sum * > SHA256SUMS.txt
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release/* --title "校园安全通图形客户端 $GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md

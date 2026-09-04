@@ -10,8 +10,8 @@
 
 | 系统 | 文件 | 支持范围 |
 | --- | --- | --- |
-| macOS | `校园安全通-macOS-arm64.zip` | macOS 12 或更高版本，Apple Silicon（M1/M2/M3/M4 等） |
-| Windows | `校园安全通-Windows-x64-Setup.exe` | Windows 10/11，x64 |
+| macOS | `XiaoyuanAnQuanTong-GUI-macOS-arm64.zip` | macOS 12 或更高版本，Apple Silicon（M1/M2/M3/M4 等） |
+| Windows | `XiaoyuanAnQuanTong-GUI-Windows-x64-Setup.exe` | Windows 10/11，x64 |
 
 Release 同时提供 `SHA256SUMS.txt`，可用于验证文件完整性。
 
@@ -19,7 +19,7 @@ Release 同时提供 `SHA256SUMS.txt`，可用于验证文件完整性。
 
 ### macOS
 
-1. 下载并解压 `校园安全通-macOS-arm64.zip`。
+1. 下载并解压 `XiaoyuanAnQuanTong-GUI-macOS-arm64.zip`。
 2. 首次启动时右键“校园安全通.app”，选择“打开”，再确认打开。
 3. 填写省份、学校、账号和密码，点击“开始运行”。
 4. 如匹配到多个学校，在窗口底部输入学校序号并发送。
@@ -27,7 +27,7 @@ Release 同时提供 `SHA256SUMS.txt`，可用于验证文件完整性。
 
 ### Windows
 
-1. 下载并运行 `校园安全通-Windows-x64-Setup.exe`。
+1. 下载并运行 `XiaoyuanAnQuanTong-GUI-Windows-x64-Setup.exe`。
 2. 因发行包没有商业代码签名，SmartScreen 可能提示风险；确认文件校验值正确后，选择“更多信息 → 仍要运行”。
 3. 完成安装后，从开始菜单或桌面快捷方式启动“校园安全通”。
 4. 填写信息并点击“开始运行”；多学校选择和证书目录操作与 macOS 版一致。
@@ -80,7 +80,7 @@ Windows 安装器使用的 Inno Setup 简体中文翻译来自 Kira 维护的开
 ./scripts/build-macos.sh
 ```
 
-产物位于 `dist/校园安全通-macOS-arm64.zip`。
+产物位于 `dist/XiaoyuanAnQuanTong-GUI-macOS-arm64.zip`。
 
 ### 构建 Windows x64 安装程序
 
@@ -90,7 +90,7 @@ Windows 安装器使用的 Inno Setup 简体中文翻译来自 Kira 维护的开
 powershell -ExecutionPolicy Bypass -File .\scripts\build-windows.ps1
 ```
 
-产物位于 `dist\校园安全通-Windows-x64-Setup.exe`。
+产物位于 `dist\XiaoyuanAnQuanTong-GUI-Windows-x64-Setup.exe`。
 
 ### 测试提示解析器
 

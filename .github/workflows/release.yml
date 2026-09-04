@@ -26,7 +26,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: macos-arm64
-          path: dist/校园安全通-macOS-arm64.zip
+          path: dist/XiaoyuanAnQuanTong-GUI-macOS-arm64.zip
           if-no-files-found: error
 
   windows:
@@ -56,7 +56,7 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: windows-x64
-          path: dist/校园安全通-Windows-x64-Setup.exe
+          path: dist/XiaoyuanAnQuanTong-GUI-Windows-x64-Setup.exe
           if-no-files-found: error
 
   release:

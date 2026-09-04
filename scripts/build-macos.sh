@@ -22,7 +22,8 @@ xattr -cr "$APP_DIR"
 codesign --force --deep --sign - "$APP_DIR"
 codesign --verify --deep --strict --verbose=2 "$APP_DIR"
 
-rm -f "$DIST_DIR/校园安全通-macOS-arm64.zip"
-ditto -c -k --sequesterRsrc --keepParent "$APP_DIR" "$DIST_DIR/校园安全通-macOS-arm64.zip"
-unzip -t "$DIST_DIR/校园安全通-macOS-arm64.zip" >/dev/null
-echo "已生成 $DIST_DIR/校园安全通-macOS-arm64.zip"
+PACKAGE="$DIST_DIR/XiaoyuanAnQuanTong-GUI-macOS-arm64.zip"
+rm -f "$PACKAGE"
+ditto -c -k --sequesterRsrc --keepParent "$APP_DIR" "$PACKAGE"
+unzip -t "$PACKAGE" >/dev/null
+echo "已生成 $PACKAGE"

@@ -18,6 +18,6 @@ New-Item -ItemType Directory -Path $dist -Force | Out-Null
 & $iscc (Join-Path $root "installer\windows.iss")
 if ($LASTEXITCODE -ne 0) { throw "Windows 安装程序构建失败" }
 
-$installer = Join-Path $dist "校园安全通-Windows-x64-Setup.exe"
+$installer = Join-Path $dist "XiaoyuanAnQuanTong-GUI-Windows-x64-Setup.exe"
 if (-not (Test-Path $installer)) { throw "未生成 Windows 安装程序" }
 Write-Host "已生成 $installer"
